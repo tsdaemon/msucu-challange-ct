@@ -1,27 +1,9 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
-ctr = pd.read_csv('./data/QUIC_Fact_CTR.csv', sep='\t')
-customers = pd.read_csv('./data/QUIC_Dim_Customer.csv', sep='\t')
+ctr = pd.read_csv('./data/QUIC_Fact_CTR_clean.csv', sep='\t')
+customers = pd.read_csv('./data/QUIC_Dim_Customer_clean.csv', sep='\t')
 days = pd.read_csv('./data/QUIC_Dim_Day_digitised.csv', sep='\t')
-
-# first clean datasets separately
-def clean_city_data(city):
-    # first remove spaces
-    city = city.strip()
-    # and remove anything except symbols and digits
-    city = filter(lambda x: x.isdigit() or x.isalpha(), city)
-    return city
-
-ctr['STORE_CITY'] = ctr['STORE_CITY'].apply(clean_city_data)
-customers['CITY_NM'] = customers['CITY_NM'].apply(clean_city_data)
-
-# replace empty values in datasets
-def replace_empty(dataset, column, empty):
-    dataset.ix[dataset[column] == '  ', column] = empty
-
-replace_empty(customers, 'EMAILABLE', 'N')
-replace_empty(customers, 'COUNTRY_CD', 'CA')
 
 # then join
 dataset = pd.merge(ctr, customers, on='CUSTOMER_ID')

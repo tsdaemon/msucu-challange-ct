@@ -2,25 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
-customers = pd.read_csv('./data/QUIC_Dim_Customer.csv', sep='\t')
-
-# city data is a real trash
-def clean_city_data(city):
-    # first remove spaces
-    city = city.strip()
-    # and remove anything except symbols and digits
-    city = filter(lambda x: x.isdigit() or x.isalpha(), city)
-    return city
-
-customers['CITY_NM'] = customers['CITY_NM'].apply(clean_city_data)
-
-# replace empty values in datasets
-def replace_empty(dataset, column, empty):
-    dataset.ix[dataset[column] == '  ', column] = empty
-
-replace_empty(customers, 'EMAILABLE', 'N')
-replace_empty(customers, 'COUNTRY_CD', 'CA')
-
+customers = pd.read_csv('./data/QUIC_Dim_Customer_clean.csv', sep='\t')
 
 # replace text representation with class
 def replace_with_labels(dataset, column):

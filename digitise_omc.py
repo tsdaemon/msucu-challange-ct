@@ -2,33 +2,11 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
-omc = pd.read_csv('./data/QUIC_Fact_OMC.csv', sep='\t')
-customers = pd.read_csv('./data/QUIC_Dim_Customer.csv', sep='\t')
+omc = pd.read_csv('./data/QUIC_Fact_OMC_clean.csv', sep='\t')
+customers = pd.read_csv('./data/QUIC_Dim_Customer_clean.csv', sep='\t')
 days = pd.read_csv('./data/QUIC_Dim_Day_digitised.csv', sep='\t')
 
-# first clean datasets separately
-def clean_city_data(city):
-    if(city is basestring):
-        # first remove spaces
-        city = city.strip()
-        # and remove anything except symbols and digits
-        city = filter(lambda x: x.isdigit() or x.isalpha(), city)
-        return city
-    else:
-        return 'UNKNOWN'
-
-omc.ix[omc['MERCHANT_CITY'] == np.nan, 'MERCHANT_CITY'] = ''
-omc['MERCHANT_CITY'] = omc['MERCHANT_CITY'].apply(clean_city_data)
-customers['CITY_NM'] = customers['CITY_NM'].apply(clean_city_data)
-
-# replace empty values in datasets
-def replace_empty(dataset, column, empty):
-    dataset.ix[dataset[column] == '  ', column] = empty
-
-replace_empty(customers, 'EMAILABLE', 'N')
-replace_empty(customers, 'COUNTRY_CD', 'CA')
-
-# then join
+# join
 dataset = pd.merge(omc, customers, on='CUSTOMER_ID')
 
 # replace text representation with class
